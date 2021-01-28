@@ -1,0 +1,22 @@
+{
+  "name": "lambda/datagrid",
+  "description": "Lambda datagrid plugin",
+  "type": "plugin",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "n0m4dz",
+      "email": "tseegii.it@gmail.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "laravel": {
+    "providers": [
+      "Lambda\\Datagrid\\DatagridServiceProvider"
+    ],
+    "aliases": {
+      "Datagrid": "Lambda\\Datagrid\\Datagrid"
+    }
+  },
+  "require": {}
+}
