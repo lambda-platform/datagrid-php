@@ -1,5 +1,5 @@
 {
-  "name": "lambda/datagrid",
+  "name": "lambda-platform/datagrid",
   "description": "Lambda datagrid plugin",
   "type": "plugin",
   "license": "MIT",
