@@ -18,5 +18,10 @@
       "Datagrid": "Lambda\\Datagrid\\Datagrid"
     }
   },
-  "require": {}
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "Lambda\\Datagrid\\": "src"
+    }
+  }
 }
