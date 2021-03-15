@@ -236,20 +236,25 @@ class Datagrid extends Facade
                             $this->qr = $this->qr->where($c_condition['field'], '!=', $c_condition['value']);
                         }
                         break;
-                    case 'lessThan':
+                    case 'range':
                         if ($c_condition['value']) {
+                            $this->qr = $this->qr->where($c_condition['field'], '>=', Carbon::parse($c_condition['value'][0])->subDay())->where($c_condition['field'], '<=', Carbon::parse($c_condition['value'][1])->addDays(1));
+                        }
+                        break;
+                    case 'lessThan':
+                        if (isset($c_condition['value']) && $c_condition['value'] && $c_condition['value'] != null) {
                             $this->qr = $this->qr->where($c_condition['field'], '<=', $c_condition['value']);
                         }
                         break;
                     case 'greaterThan':
-                        if ($c_condition['value']) {
+                        if (isset($c_condition['value'])) {
                             $this->qr = $this->qr->where($c_condition['field'], '>=', $c_condition['value']);
                         }
                         break;
                     default:
-//                        if ($c_condition['value'] && strval($c_condition['value']) != strval(0)) {
-//                            $this->qr = $this->qr->where($c_condition['field'], '=', $c_condition['value']);
-//                        }
+                        if ($c_condition['value'] && strval($c_condition['value']) != strval(0)) {
+                            $this->qr = $this->qr->where($c_condition['field'], '=', $c_condition['value']);
+                        }
                         break;
                 }
             }
@@ -376,39 +381,6 @@ class Datagrid extends Facade
     {
         $this->excelHeader[] = $s->label ? $s->label : $s->model;
     }
-
-//    public function exportExcel($schemaID)
-//    {
-//        $this->filter();
-//        if (isset($this->dbSchema->condition)) {
-//            $this->qr = $this->qr->whereRaw($this->dbSchema->condition);
-//        }
-//
-//        $this->qr = $this->callTrigger('beforeFetch', $this->qr);
-//        $data = $this->qr->get()->toArray();
-//        $data = $this->callTrigger('afterFetch', $data);
-////        dump($data);
-//        $data = json_decode(json_encode($data), true);
-//
-//        $excelFile = Excel::create('TmpExcelFile', function ($excel) use ($data) {
-//            $excel->sheet('Excel', function ($sheet) use ($data) {
-//                $sheetArray = array();
-//                $sheetArray[] = $this->excelHeader;
-//                foreach ($data as $row) {
-//                    $sheetArray[] = $row;
-//                }
-//                $sheet->fromArray($sheetArray, null, 'A1', false, false);
-//            });
-//        });
-//
-//        $response = [
-//            'name' => $this->title . '-' . Carbon::today() . '.xlsx',
-////            'file' => 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' . base64_encode($excelFile->string('xlsx')),
-//            'file' => base64_encode($excelFile->string('xlsx')),
-//        ];
-//
-//        return response()->json($response);
-//    }
 
     public function exportExcel($schemaID)
     {
