@@ -115,7 +115,7 @@ class Datagrid extends Facade
             $data = $this->qr->get();
             return $this->callTrigger('afterFetch', $data);
         }
-       //return $this->qr->toSql();
+        //return $this->qr->toSql();
 
         $data = $this->qr->paginate(request()->get('paginate'));
         return $this->callTrigger('afterFetch', $data);
@@ -247,9 +247,9 @@ class Datagrid extends Facade
                         }
                         break;
                     default:
-                        if ($c_condition['value'] && strval($c_condition['value']) != strval(0)) {
-                            $this->qr = $this->qr->where($c_condition['field'], '=', $c_condition['value']);
-                        }
+//                        if ($c_condition['value'] && strval($c_condition['value']) != strval(0)) {
+//                            $this->qr = $this->qr->where($c_condition['field'], '=', $c_condition['value']);
+//                        }
                         break;
                 }
             }
@@ -288,12 +288,12 @@ class Datagrid extends Facade
             if ($filter['dateTo'] != null) {
                 $this->qr = $this->qr->where($model, '<=', $filter['dateTo']);
             }
-        } elseif ($filter['filterType'] == 'set'){
+        } elseif ($filter['filterType'] == 'set') {
 //            if(is_array($filter['values']) && count($filter['values']) > 0){
             $this->qr = $this->qr->whereIn($model, $filter['values']);
 //            }
         } else {
-            if(!isset($filter['type'])){
+            if (!isset($filter['type'])) {
                 return;
             }
 
@@ -346,7 +346,7 @@ class Datagrid extends Facade
     {
         //Soft delete
         if (isset($this->dbSchema->softDelete) && $this->dbSchema->softDelete) {
-            $this->qr = $this->qr->where($this->dbSchema->model.'.deleted_at', null);
+            $this->qr = $this->qr->where($this->dbSchema->model . '.deleted_at', null);
         }
         //Tag select
         //Tag select
@@ -377,6 +377,39 @@ class Datagrid extends Facade
         $this->excelHeader[] = $s->label ? $s->label : $s->model;
     }
 
+//    public function exportExcel($schemaID)
+//    {
+//        $this->filter();
+//        if (isset($this->dbSchema->condition)) {
+//            $this->qr = $this->qr->whereRaw($this->dbSchema->condition);
+//        }
+//
+//        $this->qr = $this->callTrigger('beforeFetch', $this->qr);
+//        $data = $this->qr->get()->toArray();
+//        $data = $this->callTrigger('afterFetch', $data);
+////        dump($data);
+//        $data = json_decode(json_encode($data), true);
+//
+//        $excelFile = Excel::create('TmpExcelFile', function ($excel) use ($data) {
+//            $excel->sheet('Excel', function ($sheet) use ($data) {
+//                $sheetArray = array();
+//                $sheetArray[] = $this->excelHeader;
+//                foreach ($data as $row) {
+//                    $sheetArray[] = $row;
+//                }
+//                $sheet->fromArray($sheetArray, null, 'A1', false, false);
+//            });
+//        });
+//
+//        $response = [
+//            'name' => $this->title . '-' . Carbon::today() . '.xlsx',
+////            'file' => 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' . base64_encode($excelFile->string('xlsx')),
+//            'file' => base64_encode($excelFile->string('xlsx')),
+//        ];
+//
+//        return response()->json($response);
+//    }
+
     public function exportExcel($schemaID)
     {
         $this->filter();
@@ -385,26 +418,11 @@ class Datagrid extends Facade
         }
 
         $this->qr = $this->callTrigger('beforeFetch', $this->qr);
-        $data = $this->qr->get()->toArray();
-        $data = $this->callTrigger('afterFetch', $data);
-//        dump($data);
-        $data = json_decode(json_encode($data), true);
-
-        $excelFile = Excel::create('TmpExcelFile', function ($excel) use ($data) {
-            $excel->sheet('Excel', function ($sheet) use ($data) {
-                $sheetArray = array();
-                $sheetArray[] = $this->excelHeader;
-                foreach ($data as $row) {
-                    $sheetArray[] = $row;
-                }
-                $sheet->fromArray($sheetArray, null, 'A1', false, false);
-            });
-        });
+        $excelFile = Excel::raw(new ExportExcel($this->qr, $this->excelHeader), \Maatwebsite\Excel\Excel::XLSX);
 
         $response = [
             'name' => $this->title . '-' . Carbon::today() . '.xlsx',
-//            'file' => 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' . base64_encode($excelFile->string('xlsx')),
-            'file' => base64_encode($excelFile->string('xlsx')),
+            'file' => base64_encode($excelFile),
         ];
 
         return response()->json($response);
@@ -426,8 +444,7 @@ class Datagrid extends Facade
         $data = $this->qr->get();
 
 
-
-        return response()->json(["data"=>$data, "schema"=>$this->schema]);
+        return response()->json(["data" => $data, "schema" => $this->schema]);
     }
 
     public function printData($schemaID)
