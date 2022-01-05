@@ -18,7 +18,9 @@
       "Datagrid": "Lambda\\Datagrid\\Datagrid"
     }
   },
-  "require": {},
+  "require": {
+    "maatwebsite/excel": "^3.1"
+  },
   "autoload": {
     "psr-4": {
       "Lambda\\Datagrid\\": "src"
