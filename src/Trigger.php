@@ -7,7 +7,6 @@ trait Trigger
     //For specific ID
     public function callTrigger($action, $qrOrData, $id = null)
     {
-
         if (!property_exists($this->dbSchema, 'triggers')) {
             return $qrOrData;
         }
@@ -17,6 +16,8 @@ trait Trigger
         }
 
         switch ($action) {
+            case 'excelImport':
+                return $this->execTrigger($this->dbSchema->excelUploadCustomNamespace, $this->dbSchema->excelUploadCustomTrigger, $qrOrData);
             case 'beforeFetch':
                 return $this->execTrigger($this->dbSchema->triggers->namespace, $this->dbSchema->triggers->beforeFetch, $qrOrData);
             case 'afterFetch':

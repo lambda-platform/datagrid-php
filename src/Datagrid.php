@@ -56,7 +56,7 @@ class Datagrid extends Facade
         }
     }
 
-    public static function exec($action, $schemaID, $id = false)
+    public static function exec($action, $schemaID,$file=null, $id = false)
     {
         $g = new self();
         if ($action == 'aggergation') {
@@ -72,6 +72,8 @@ class Datagrid extends Facade
                 return $g->aggergation();
             case 'excel':
                 return $g->exportExcel($schemaID);
+            case 'excel-import':
+                return $g->importExcel($schemaID,$file);
             case 'custom-data':
                 return $g->cusTomData($schemaID);
             case 'print':
@@ -398,6 +400,11 @@ class Datagrid extends Facade
         ];
 
         return response()->json($response);
+    }
+
+    public function importExcel($schemaID,$file)
+    {
+        return $this->callTrigger('excelImport', $file);
     }
 
     public function cusTomData($schemaID)
